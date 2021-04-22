@@ -42,11 +42,25 @@ For log = natural log uncomment the next line. */
 #include <ctype.h>
 #include <limits.h>
 
+long long gcd( long long a, long long b)
+{
+    long long temp;
+    while (b != 0)
+    {
+        temp = a % b;
+
+        a = b;
+        b = temp;
+    }
+    return a;
+}
 
 Rational Fraction(long long n, long long d){
+		long long gcd_val;
 	    Rational result;
-		result.numerator = n;
-		result.denominator = d;
+		gcd_val = gcd(n,d);
+		result.numerator   = n/gcd_val;
+		result.denominator = d/gcd_val;
 		return result;
 }
 
@@ -142,18 +156,6 @@ void te_free(te_expr *n) {
     'Y': int(1e24),   # yotta
 */
 
-long long gcd( long long a, long long b)
-{
-    long long temp;
-    while (b != 0)
-    {
-        temp = a % b;
-
-        a = b;
-        b = temp;
-    }
-    return a;
-}
 #define Yacto 10000000000000000000
 Rational add( Rational a,  Rational b){
 	 long long num;
@@ -204,6 +206,25 @@ Rational divide(Rational a,Rational b){
 	   result.denominator = den/gcd_val;
 	   return result;
 }
+
+Rational tenpow(Rational a,Rational b){
+       long long num;
+       long long den;
+       long long gcd_val;
+       Rational result;
+		if (b.denominator == 1){
+			//printf("DEBUG: power of fraction\n");
+		   num = a.numerator*(long long)pow(10,b.numerator);
+		   den = a.denominator ;
+		   gcd_val = gcd(num,den);
+		   result.numerator   = num/gcd_val;
+		   result.denominator = den/gcd_val;
+		}
+		else{
+			//printf("ERROR: Cannot handle power of fraction\n");
+		}
+	   return result;
+}
 Rational negate(Rational a){
         Rational result;
 		result.numerator = -a.numerator;
@@ -211,9 +232,9 @@ Rational negate(Rational a){
 		return result;
 }
 
-	
-static Rational z(void) {return Fraction(1,1000000000000000000);}//zepto
-static Rational f(void) {return Fraction(1,1000000000000000);}//femto
+//static Rational y(void) {return Fraction(1,1000000000000000000000000);}//yocto
+//static Rational z(void) {return Fraction(1,1000000000000000000);}//zepto
+//static Rational f(void) {return Fraction(1,1000000000000000);}//femto
 static Rational p(void) {return Fraction(1,1000000000000);}//pico
 static Rational n(void) {return Fraction(1,1000000000);}//nano
 static Rational u(void) {return Fraction(1,1000000);}//micro
@@ -221,13 +242,17 @@ static Rational m(void) {return Fraction(1,1000);}//milli
 static Rational c(void) {return Fraction(1,100);}//centi
 static Rational d(void) {return Fraction(1,10);}//deci
 static Rational da(void){return Fraction(10,1);}//deca
-static Rational h(void) {return Fraction(100,1);}//hectogccm
+static Rational h(void) {return Fraction(100,1);}//hectogcm
 static Rational k(void) {return Fraction(1000,1);}//kilo
 static Rational M(void) {return Fraction(1000000,1);}//mega
+static Rational Mhz(void) {return Fraction(1000000,1);}//mega
 static Rational G(void) {return Fraction(1000000000,1);}//giga
 static Rational T(void) {return Fraction(100000000000,1);}//tera
 static Rational P(void) {return Fraction(100000000000000,1);}//peta
-static Rational E(void) {return Fraction(1000000000000000000,1);}//exa
+//static Rational E(void) {return Fraction(1000000000000000000,1);}//exa
+//static Rational Y(void) {return Fraction(1000000000000000000000000,1);}//yotta
+//static Rational Z(void) {return Fraction(1000000000000000000000,1);}//zetto
+
 
 static Rational fac(Rational a) {/* simplest version of fac */
     if (a.numerator < 0.0)
@@ -261,28 +286,31 @@ static Rational npr(Rational n, Rational r) {return mul(ncr(n, r) , fac(r));}
 
 static const te_variable functions[] = {
     /* must be in alphabetical order */
-	{"E",E,           TE_FUNCTION0 | TE_FLAG_PURE, 0},
+	//{"E",E,           TE_FUNCTION0 | TE_FLAG_PURE, 0},
 	{"G",G,           TE_FUNCTION0 | TE_FLAG_PURE, 0},
 	{"M",M,           TE_FUNCTION0 | TE_FLAG_PURE, 0},
+	{"Mhz",Mhz,       TE_FUNCTION0 | TE_FLAG_PURE, 0},	
 	{"P",P,           TE_FUNCTION0 | TE_FLAG_PURE, 0},
 	{"T",T,           TE_FUNCTION0 | TE_FLAG_PURE, 0},
+	//{"Y",Y,           TE_FUNCTION0 | TE_FlAG_PURE, 0},
+	//{"Z",Z,           TE_FUNCTION0 | TE_FlAG_PURE, 0},
     {"abs", fabs,     TE_FUNCTION1 | TE_FLAG_PURE, 0},
     {"acos", acos,    TE_FUNCTION1 | TE_FLAG_PURE, 0},
     {"asin", asin,    TE_FUNCTION1 | TE_FLAG_PURE, 0},
     {"atan", atan,    TE_FUNCTION1 | TE_FLAG_PURE, 0},
     {"atan2", atan2,  TE_FUNCTION2 | TE_FLAG_PURE, 0},
 	{"c",c, 		  TE_FUNCTION0 | TE_FLAG_PURE, 0},
-    {"ceil", ceil,    TE_FUNCTION0 | TE_FLAG_PURE, 0},
+    //{"ceil", ceil,    TE_FUNCTION0 | TE_FLAG_PURE, 0},
     {"cos", cos,      TE_FUNCTION0 | TE_FLAG_PURE, 0},
     {"cosh", cosh,    TE_FUNCTION0 | TE_FLAG_PURE, 0},
 	{"d",d,           TE_FUNCTION0 | TE_FLAG_PURE, 0},
 	{"da",da,         TE_FUNCTION0 | TE_FLAG_PURE, 0},
-    {"exp", exp,      TE_FUNCTION0 | TE_FLAG_PURE, 0},
-	{"f",f,           TE_FUNCTION0 | TE_FLAG_PURE, 0},
+	// {"exp", exp,      TE_FUNCTION0 | TE_FLAG_PURE, 0},
+	//{"f",f,           TE_FUNCTION0 | TE_FLAG_PURE, 0},
     {"fac", fac,      TE_FUNCTION0 | TE_FLAG_PURE, 0},
-    {"floor", floor,  TE_FUNCTION0 | TE_FLAG_PURE, 0},
+   // {"floor", floor,  TE_FUNCTION0 | TE_FLAG_PURE, 0},
 	{"h",h,           TE_FUNCTION0 | TE_FLAG_PURE, 0},
-	{"k",k,           TE_FUNCTION0 | TE_FLAG_PURE, 0},
+    {"k",k,           TE_FUNCTION0 | TE_FLAG_PURE, 0},
 	{"ln",log,        TE_FUNCTION0 | TE_FLAG_PURE, 0},
 #ifdef TE_NAT_LOG
     {"log", log,      TE_FUNCTION1 | TE_FLAG_PURE, 0},
@@ -302,7 +330,8 @@ static const te_variable functions[] = {
 	{"tan", tan,      TE_FUNCTION1 | TE_FLAG_PURE, 0},
     {"tanh", tanh,    TE_FUNCTION1 | TE_FLAG_PURE, 0},
 	{"u",u,           TE_FUNCTION0 | TE_FLAG_PURE, 0},
-	{"z",z,           TE_FUNCTION0 | TE_FLAG_PURE, 0},
+	//{"y",y,           TE_FUNCTION1 | TE_FLAG_PURE, 0},
+	//{"z",z,           TE_FUNCTION0 | TE_FLAG_PURE, 0},
 
     {0, 0, 0, 0}
 };
@@ -343,38 +372,66 @@ static const te_variable *find_lookup(const state *s, const char *name, int len)
 
 static Rational comma(Rational a, Rational b){(void) a; return b;}
 
-Rational convert_str(const char *str, char **end){
-	/*
-    char dot;
-  	char *numer = (char *)malloc(sizeof(char)*strlen(str));
-	char *apointer;
+Rational convert_str(const char *st, char **end){
+  	char *numer = (char *)malloc(sizeof(char)*strlen(st));
+	char *dummy_pt; // Return value of the integer conversion I do not need.
+	double dummy_num; // Dummy float number that it would have converted that I do not need.
+	char dot;
+	int point_found, point_loc, remaining_str;
   	int i;
 	int j;
-  	long int digits_after_point,denom;
+  	long int denom;
   	dot='.';
 	j=0;
-  	for(i = 0; i <= strlen(str); i++)
+	point_found = 0;
+	remaining_str = 0;
+  	for(i = 0; i < strlen(st); i++)
   	{
-  		if(str[i] == dot)  
-		{
-            digits_after_point=strlen(str)-(i+1);
-  			denom=pow(10,digits_after_point);
+		if ((st[i] >= '0' && st[i] <= '9') || st[i] == dot){
+			if(st[i] == dot)  
+			{
+				point_found = 1;
+				point_loc=i;
 			}
-  		else{
-			numer[j]=str[i];
-			j = j+1;
-  		}
+			else{
+				numer[j]=st[i];
+				j = j+1;
+			}
+		}
+		else{
+			remaining_str = 1;
+			break;
+		}
 	}
-  	Rational result;
-	result.numerator = (long long)strtol(numer, &apointer,10);
-	result.denominator = (long long)denom;
-  	// printf("DEBUG: Convert Str: (%lld, %lld)",result.numerator,result.denominator);
-	free(numer);
+	*end = st+i;
+	/*
+	if (remaining_str==1){
+		*end = st+i;
+	}
+	else{
+		*end = st+i+1;
+	}
 	*/
+	// printf("DEBUG: Remaining string %s\n",**end);
+	if(point_found == 1){
+		//printf("DEBUG: i: %d, point_loc=%d, power=%d\n",i,point_loc,i-point_loc-1);
+		denom=pow(10,i-point_loc-1);
+	}
+	else{
+		denom=1;
+	}
+	//printff("DEBUG: begining st pointer :%d\n",st);
+	//printff("DEBUG: What I set :%d\n",*end);
+	// dummy_num = strtod(st,end); // 1*M, 1.4*M, 1e4
+	// //printff("DEBUG: begining st pointer :%d\n",st);
+	// printf("DEBUG: strtod sets to :%d\n",*end);
+	// printf("DEBUG: Dummy number found is : %f\n",dummy_num);
   	Rational result;
-	result.numerator = 10;
-	result.denominator = 1;
-	return result;	
+	result = Fraction((long long)strtol(numer, &dummy_pt,10), (long long)denom);
+  	// printf("DEBUG: Convert Str: (%lld, %lld)\n",result.numerator,result.denominator);
+	free(numer);
+	return result;
+	
 }
 
 void next_token(state *s) {
@@ -394,7 +451,7 @@ void next_token(state *s) {
             s->type = TOK_NUMBER;
         } else {
             /* Look for a variable or builtin function call. */
-            if (isalpha(s->next[0])) {
+            if (isalpha(s->next[0]) &&!( s->next[0]=='e' || s->next[0]=='E')) {
                 const char *start;
                 start = s->next;
                 while (isalpha(s->next[0]) || isdigit(s->next[0]) || (s->next[0] == '_')) s->next++;
@@ -431,6 +488,8 @@ void next_token(state *s) {
                     case '-': s->type = TOK_INFIX; s->function = sub; break;
                     case '*': s->type = TOK_INFIX; s->function = mul; break;
                     case '/': s->type = TOK_INFIX; s->function = divide; break;
+                    case 'e': s->type = TOK_INFIX; s->function = tenpow; break;
+                    case 'E': s->type = TOK_INFIX; s->function = tenpow; break;
                     case '^': s->type = TOK_INFIX; s->function = pow; break;
                     case '%': s->type = TOK_INFIX; s->function = fmod; break;
                     case '(': s->type = TOK_OPEN; break;
@@ -457,7 +516,7 @@ static te_expr *base(state *s) {
     switch (TYPE_MASK(s->type)) {
         case TOK_NUMBER:
             ret = new_expr(TE_CONSTANT, 0);
-			printf("Return Value set = (%lld,%lld)\n",s->value.numerator, s->value.denominator);
+			//printff("Return Value set = (%lld,%lld)\n",s->value.numerator, s->value.denominator);
             ret->value = s->value;
             next_token(s);
             break;
@@ -627,7 +686,7 @@ static te_expr *term(state *s) {
     /* <term>      =    <factor> {("*" | "/" | "%") <factor>} */
     te_expr *ret = factor(s);
 
-    while (s->type == TOK_INFIX && (s->function == mul || s->function == divide || s->function == fmod)) {
+    while (s->type == TOK_INFIX && (s->function == mul || s->function == divide || s->function == fmod || s->function == tenpow)) {
         te_fun2 t = s->function;
         next_token(s);
         ret = NEW_EXPR(TE_FUNCTION2 | TE_FLAG_PURE, ret, factor(s));
@@ -763,7 +822,6 @@ te_expr *te_compile(const char *expression, const te_variable *variables, int va
     }
 }
 
-
 Rational te_interp(const char *expression, int *error) {
     te_expr *n = te_compile(expression, 0, 0, error);
     Rational ret;
@@ -778,22 +836,24 @@ Rational te_interp(const char *expression, int *error) {
 
 static void pn (const te_expr *n, int depth) {
     int i, arity;
-    printf("%*s", depth, "");
+    //printff("%*s", depth, "");
 
     switch(TYPE_MASK(n->type)) {
-    case TE_CONSTANT: printf("%f\n", n->value); break;
-    case TE_VARIABLE: printf("bound %p\n", n->bound); break;
+    case TE_CONSTANT: /*printff("%f\n", n->value);*/ break;
+    case TE_VARIABLE: /*printff("bound %p\n", n->bound);*/ break;
 
     case TE_FUNCTION0: case TE_FUNCTION1: case TE_FUNCTION2: case TE_FUNCTION3:
     case TE_FUNCTION4: case TE_FUNCTION5: case TE_FUNCTION6: case TE_FUNCTION7:
     case TE_CLOSURE0: case TE_CLOSURE1: case TE_CLOSURE2: case TE_CLOSURE3:
     case TE_CLOSURE4: case TE_CLOSURE5: case TE_CLOSURE6: case TE_CLOSURE7:
          arity = ARITY(n->type);
-         printf("f%d", arity);
-         for(i = 0; i < arity; i++) {
+         //printff("f%d", arity);
+         /*for(i = 0; i < arity; i++) {
              printf(" %p", n->parameters[i]);
          }
-         printf("\n");
+		 
+		 
+         printf("\n");*/
          for(i = 0; i < arity; i++) {
              pn(n->parameters[i], depth + 1);
          }
