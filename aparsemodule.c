@@ -16,6 +16,7 @@ aparse_parser(PyObject *self, PyObject *args)
 
     /* This will compile the expression and check for errors. */
     int err;
+	printf("expression = %s\n",expression);
     te_expr *n = te_compile(expression, vars, 2, &err);
 	Rational r;
     if (n) {
