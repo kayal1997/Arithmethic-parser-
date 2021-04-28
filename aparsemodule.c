@@ -6,7 +6,8 @@
 static PyObject *
 aparse_parser(PyObject *self, PyObject *args)
 {
-    const char *expression;
+    char *expression;
+    char *output;
     int sts;
 
     if (!PyArg_ParseTuple(args, "s", &expression))
@@ -31,8 +32,8 @@ aparse_parser(PyObject *self, PyObject *args)
         /* Show the user where the error is at. */
        // printf("\t%*s^\nError near here", err-1, "");
     }	
-	sprintf(expression,("%lld/%lld"),r.numerator,r.denominator);
-    return PyUnicode_FromString(expression);
+	sprintf(output,"%lld/%lld",r.numerator,r.denominator);
+    return PyUnicode_FromString(output);
 }
 
 

@@ -75,7 +75,7 @@ for idx,line in enumerate(file,1):
 
     exp1 =(exp + '.')[:-1]
     # Write the cparsed value to column 5
-    cparsed_op = f'{aparse.parser(str(exp1))}'
+    cparsed_op = aparse.parser(str(exp1))
     sheet.write(idx,5,cparsed_op)
     print(f'For input={line}, exp={exp}, cparsed_op = {cparsed_op}')
 
