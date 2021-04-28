@@ -187,9 +187,31 @@ Rational mul(Rational a,Rational b){
        long long den;
        long long gcd_val;
         Rational result;
-       num = a.numerator*b.numerator;
-	   den = a.denominator * b.denominator;
-	   gcd_val = gcd(num,den);
+        Rational reduced_a;
+        Rational reduced_b;
+        // If I can cancel anything before multiplication I can keep numbers small
+        // Reduce a and b independently
+        // Define reduced_a
+        gcd_val = gcd(a.numerator, a.denominator);
+        reduced_a.numerator = a.numerator/gcd_val;
+        reduced_a.denominator = a.denominator/gcd_val;
+        // Define reduced_b
+        gcd_val = gcd(b.numerator, b.denominator);
+        reduced_b.numerator = b.numerator/gcd_val;
+        reduced_b.denominator = b.denominator/gcd_val;
+        // Cancel across
+        gcd_val = gcd(a.numerator, b.denominator);
+        reduced_a.numerator = reduced_a.numerator/gcd_val;
+        reduced_b.denominator = reduced_b.denominator/gcd_val;
+        // Cancel across
+        gcd_val = gcd(b.numerator, a.denominator);
+        reduced_b.numerator   = reduced_b.numerator/gcd_val;
+        reduced_a.denominator = reduced_a.denominator/gcd_val;
+        
+       num = reduced_a.numerator*reduced_b.numerator;
+	   den = reduced_a.denominator*reduced_b.denominator;
+	   gcd_val = gcd(num,den); // This is unlikely to be anything other than 1
+	   printf("DEBUG: I expect this gcd_val in mul = 1 %lld\n",gcd_val);
 	   result.numerator   = num/gcd_val;
 	   result.denominator = den/gcd_val;
 	   return result;
@@ -207,21 +229,41 @@ Rational divide(Rational a,Rational b){
 	   return result;
 }
 
+Rational pow_10(long long a){
+        long long tenp=1;
+        Rational result;
+        if(a==0){
+            result = Fraction((long long) 1,(long long) 1);        
+        } // if a==0
+        else{
+            if(a>0){
+                for(int i=1;i<=a;i++){
+                    tenp *= 10;   
+                } // for
+                result = Fraction(tenp,(long long)1);
+            } // if a>0
+            else {
+                for(int i=1;i<=abs(a);i++){
+                    tenp *= 10;   
+                } //for
+                result = Fraction((long long)1,tenp);
+            } // else
+        } // else (a==0)
+        printf("pow_10(%lld) result num=%lld, den=%lld\n",a,result.numerator, result.denominator);
+        return result;
+}
 Rational tenpow(Rational a,Rational b){
-       long long num;
-       long long den;
        long long gcd_val;
        Rational result;
 		if (b.denominator == 1){
-			//printf("DEBUG: power of fraction\n");
-		   num = a.numerator*(long long)pow(10,b.numerator);
-		   den = a.denominator ;
-		   gcd_val = gcd(num,den);
-		   result.numerator   = num/gcd_val;
-		   result.denominator = den/gcd_val;
+		   result = mul(a,pow_10(b.numerator));
+		   printf("num = %lld, den=%lld\n",result.numerator,result.denominator);
+		   gcd_val = gcd(result.numerator,result.denominator);
+		   result.numerator   = result.numerator/gcd_val;
+		   result.denominator = result.denominator/gcd_val;
 		}
 		else{
-			//printf("ERROR: Cannot handle power of fraction\n");
+			printf("ERROR: Cannot handle power of fraction\n");
 		}
 	   return result;
 }
@@ -373,14 +415,14 @@ static const te_variable *find_lookup(const state *s, const char *name, int len)
 static Rational comma(Rational a, Rational b){(void) a; return b;}
 
 Rational convert_str(const char *st, char **end){
-  	char *numer = (char *)malloc(sizeof(char)*strlen(st));
+  	char *numer = (char *)malloc(sizeof(char)*(strlen(st)+1));
 	char *dummy_pt; // Return value of the integer conversion I do not need.
 	double dummy_num; // Dummy float number that it would have converted that I do not need.
 	char dot;
 	int point_found, point_loc, remaining_str;
   	int i;
 	int j;
-  	long int denom;
+  	Rational negpower;
   	dot='.';
 	j=0;
 	point_found = 0;
@@ -404,6 +446,7 @@ Rational convert_str(const char *st, char **end){
 		}
 	}
 	*end = st+i;
+	numer[j] = '\0';
 	/*
 	if (remaining_str==1){
 		*end = st+i;
@@ -415,10 +458,10 @@ Rational convert_str(const char *st, char **end){
 	// printf("DEBUG: Remaining string %s\n",**end);
 	if(point_found == 1){
 		//printf("DEBUG: i: %d, point_loc=%d, power=%d\n",i,point_loc,i-point_loc-1);
-		denom=pow(10,i-point_loc-1);
+		negpower=pow_10(-(i-point_loc-1));
 	}
 	else{
-		denom=1;
+		negpower=Fraction((long long)1, (long long)1);
 	}
 	//printff("DEBUG: begining st pointer :%d\n",st);
 	//printff("DEBUG: What I set :%d\n",*end);
@@ -427,7 +470,8 @@ Rational convert_str(const char *st, char **end){
 	// printf("DEBUG: strtod sets to :%d\n",*end);
 	// printf("DEBUG: Dummy number found is : %f\n",dummy_num);
   	Rational result;
-	result = Fraction((long long)strtol(numer, &dummy_pt,10), (long long)denom);
+  	printf("DEBUG: numer = %s\n",numer);
+	result = mul(Fraction(strtoll(numer, &dummy_pt,10), (long long) 1),negpower);
   	// printf("DEBUG: Convert Str: (%lld, %lld)\n",result.numerator,result.denominator);
 	free(numer);
 	return result;

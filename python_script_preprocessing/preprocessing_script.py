@@ -9,9 +9,18 @@ Created on Thu Apr 22 22:47:44 2021
 import xlrd
 from xlutils.copy import copy
 import re
-import aparse
-# a=aparse.parser(r'2*-4*M')
+import aparse 
+# a=aparse.parser(r'20.')
 # b=aparse.parser(r'20.5*M')
+# a='(5)++(2)']
+# # a=r'20+1/20*(20*m)-1'
+# print(f'a={a}')
+# print(aparse.parser(a))
+# print(f'a={a}')
+# print(aparse.parser(a))
+# print(f'a={a}')
+# print(aparse.parser(r'2*-4*M'))
+# print(f'a={a}')
 
 # location of the input excel file
 loc = ("D:/Arithmethic-parser-/python_script_preprocessing/Inputtypesfilesspreadsheet.xlsx")
@@ -24,7 +33,7 @@ new_excel = copy(old_excel)
 sheet = new_excel.get_sheet(0)
 
 # Open the text file that has all input types. 
-file = open("D:\Arithmethic-parser-\python_script_preprocessing\myfileinputtypes_1.txt", "r")
+file = open("D:\Arithmethic-parser-\python_script_preprocessing\myfileinputtypes.txt", "r")
 
 # loop through the lines one by one   ---> Example : 20hz+20mHz
 # Strip the \n at the end
@@ -70,14 +79,15 @@ for idx,line in enumerate(file,1):
     for rstr in replace_string:
         exp = exp.replace(rstr,rstr[0]+'*'+rstr[-1])
     
+    ast=r'%s' % exp
+
     # Write the expression to column 4
     sheet.write(idx,4,exp)
 
-    exp1 =(exp + '.')[:-1]
     # Write the cparsed value to column 5
-    cparsed_op = aparse.parser(str(exp1))
+    cparsed_op = aparse.parser(ast)
     sheet.write(idx,5,cparsed_op)
-    print(f'For input={line}, exp={exp}, cparsed_op = {cparsed_op}')
+    print(f'For input={line}, exp={ast}, cparsed_op = {cparsed_op}')
 
 # Save the new excel in the following directory.      
 new_excel.save('D:/Arithmethic-parser-/python_script_preprocessing/output_excel.xls')
