@@ -10,7 +10,7 @@ import xlrd
 from xlutils.copy import copy
 import re
 import aparse
-a=aparse.parser(r'20.5*M')
+# a=aparse.parser(r'2*-4*M')
 # b=aparse.parser(r'20.5*M')
 
 # location of the input excel file
@@ -40,14 +40,14 @@ for i in range(6):
 for idx,line in enumerate(file,1):
   line = line.strip()
   line = re.sub(r"hz", "", line,flags=re.I)
-  OPER = r'[*+\-/]'
+  OPER = r'*+\-/'
   GOODOPERS = '+-*/\(\)'
   BADOPERS = ''.join([k for k in punctuation if k not in GOODOPERS])
   GOODUNITS = r'munpkMGTP'
   BADUNITS  = ''.join([k for k in ascii_letters if k not in GOODUNITS])
   
-  opr = re.findall(OPER,line)
-  var = re.split(OPER, line)
+  opr = re.findall('[%s]' % OPER,line)
+  var = re.split('[%s]' % OPER, line)
 
   # Check for invalid inputs(operator followed by alphabet) such as 1*M,2+m
   # Check for invalid inputs(alphabets other than valid units) such as yzafEYZ,If true write INVALID to column 4 of the excel
