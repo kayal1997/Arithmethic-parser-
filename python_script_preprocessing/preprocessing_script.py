@@ -10,12 +10,13 @@ import xlrd
 from xlutils.copy import copy
 import re
 import aparse 
+from fractions import Fraction
 # a=aparse.parser(r'20.')
 # b=aparse.parser(r'20.5*M')
-# a='(5)++(2)']
+a='2e-12'
 # # a=r'20+1/20*(20*m)-1'
-# print(f'a={a}')
-# print(aparse.parser(a))
+print(f'a={a}')
+print(aparse.parser(a))
 # print(f'a={a}')
 # print(aparse.parser(a))
 # print(f'a={a}')
@@ -91,3 +92,26 @@ for idx,line in enumerate(file,1):
 
 # Save the new excel in the following directory.      
 new_excel.save('D:/Arithmethic-parser-/python_script_preprocessing/output_excel.xls')
+
+
+
+# Compare columns
+rb1 = xlrd.open_workbook('D:/Arithmethic-parser-/python_script_preprocessing/output_excel.xls')
+sheet1 = rb1.sheet_by_index(0)
+arithmetic_op = sheet1.col_values(1)
+cparsed_op = sheet1.col_values(5)
+# print('arithmetic_op=',arithmetic_op)
+# print('cparsed_op=',cparsed_op)
+# print('sheet1.nrows=',sheet1.nrows)
+
+
+for idx in range(1,100):
+    print(f'Row number: {idx}')
+    comp1 = str(arithmetic_op[idx])
+    comp2 = str(cparsed_op[idx])
+    print(f'Comparing: {comp1} and {comp2}') 
+    if not comp2 =='':
+        if Fraction(str(arithmetic_op[idx]))!= Fraction(str(cparsed_op[idx])):
+            print(f'Difference in Row number: {idx-1}')
+    
+
