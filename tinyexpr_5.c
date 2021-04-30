@@ -287,7 +287,6 @@ static Rational da(void){return Fraction(10,1);}//deca
 static Rational h(void) {return Fraction(100,1);}//hectogcm
 static Rational k(void) {return Fraction(1000,1);}//kilo
 static Rational M(void) {return Fraction(1000000,1);}//mega
-static Rational Mhz(void) {return Fraction(1000000,1);}//mega
 static Rational G(void) {return Fraction(1000000000,1);}//giga
 static Rational T(void) {return Fraction(1000000000000,1);}//tera
 static Rational P(void) {return Fraction(1000000000000000,1);}//peta
@@ -310,41 +309,41 @@ static Rational fac(Rational a) {/* simplest version of fac */
     }
     return Fraction(result,1);
 }
-static Rational ncr(Rational n, Rational r) {
-    if (n.numerator < 0.0 || r.numerator < 0.0 || n.numerator < r.denominator) return RNAN();
-    if (n.numerator > UINT_MAX || r.numerator > UINT_MAX) return RINFINITY();
-    unsigned long int un = (unsigned int)(n.numerator), ur = (unsigned int)(r.numerator), i;
-    unsigned long int result = 1;
-    if (ur > un / 2) ur = un - ur;
-    for (i = 1; i <= ur; i++) {
-        if (result > ULONG_MAX / (un - ur + i))
-            return RINFINITY();
-        result *= un - ur + i;
-        result /= i;
-    }
-    return Fraction(result,1);
-}
-static Rational npr(Rational n, Rational r) {return mul(ncr(n, r) , fac(r));}
+// static Rational ncr(Rational n, Rational r) {
+//     if (n.numerator < 0.0 || r.numerator < 0.0 || n.numerator < r.denominator) return RNAN();
+//     if (n.numerator > UINT_MAX || r.numerator > UINT_MAX) return RINFINITY();
+//     unsigned long int un = (unsigned int)(n.numerator), ur = (unsigned int)(r.numerator), i;
+//     unsigned long int result = 1;
+//     if (ur > un / 2) ur = un - ur;
+//     for (i = 1; i <= ur; i++) {
+//         if (result > ULONG_MAX / (un - ur + i))
+//             return RINFINITY();
+//         result *= un - ur + i;
+//         result /= i;
+//     }
+//     return Fraction(result,1);
+// }
+// static Rational npr(Rational n, Rational r) {return mul(ncr(n, r) , fac(r));}
 
 static const te_variable functions[] = {
     /* must be in alphabetical order */
 	//{"E",E,           TE_FUNCTION0 | TE_FLAG_PURE, 0},
 	{"G",G,           TE_FUNCTION0 | TE_FLAG_PURE, 0},
 	{"M",M,           TE_FUNCTION0 | TE_FLAG_PURE, 0},
-	{"Mhz",Mhz,       TE_FUNCTION0 | TE_FLAG_PURE, 0},	
+	//{"Mhz",Mhz,       TE_FUNCTION0 | TE_FLAG_PURE, 0},	
 	{"P",P,           TE_FUNCTION0 | TE_FLAG_PURE, 0},
 	{"T",T,           TE_FUNCTION0 | TE_FLAG_PURE, 0},
 	//{"Y",Y,           TE_FUNCTION0 | TE_FlAG_PURE, 0},
 	//{"Z",Z,           TE_FUNCTION0 | TE_FlAG_PURE, 0},
-    {"abs", fabs,     TE_FUNCTION1 | TE_FLAG_PURE, 0},
-    {"acos", acos,    TE_FUNCTION1 | TE_FLAG_PURE, 0},
-    {"asin", asin,    TE_FUNCTION1 | TE_FLAG_PURE, 0},
-    {"atan", atan,    TE_FUNCTION1 | TE_FLAG_PURE, 0},
-    {"atan2", atan2,  TE_FUNCTION2 | TE_FLAG_PURE, 0},
+//     {"abs", fabs,     TE_FUNCTION1 | TE_FLAG_PURE, 0},
+//     {"acos", acos,    TE_FUNCTION1 | TE_FLAG_PURE, 0},
+//     {"asin", asin,    TE_FUNCTION1 | TE_FLAG_PURE, 0},
+//     {"atan", atan,    TE_FUNCTION1 | TE_FLAG_PURE, 0},
+//     {"atan2", atan2,  TE_FUNCTION2 | TE_FLAG_PURE, 0},
 	{"c",c, 		  TE_FUNCTION0 | TE_FLAG_PURE, 0},
     //{"ceil", ceil,    TE_FUNCTION0 | TE_FLAG_PURE, 0},
-    {"cos", cos,      TE_FUNCTION0 | TE_FLAG_PURE, 0},
-    {"cosh", cosh,    TE_FUNCTION0 | TE_FLAG_PURE, 0},
+//     {"cos", cos,      TE_FUNCTION0 | TE_FLAG_PURE, 0},
+//     {"cosh", cosh,    TE_FUNCTION0 | TE_FLAG_PURE, 0},
 	{"d",d,           TE_FUNCTION0 | TE_FLAG_PURE, 0},
 	{"da",da,         TE_FUNCTION0 | TE_FLAG_PURE, 0},
 	// {"exp", exp,      TE_FUNCTION0 | TE_FLAG_PURE, 0},
@@ -353,24 +352,24 @@ static const te_variable functions[] = {
    // {"floor", floor,  TE_FUNCTION0 | TE_FLAG_PURE, 0},
 	{"h",h,           TE_FUNCTION0 | TE_FLAG_PURE, 0},
     {"k",k,           TE_FUNCTION0 | TE_FLAG_PURE, 0},
-	{"ln",log,        TE_FUNCTION0 | TE_FLAG_PURE, 0},
-#ifdef TE_NAT_LOG
-    {"log", log,      TE_FUNCTION1 | TE_FLAG_PURE, 0},
-#else
-    {"log", log10,    TE_FUNCTION1 | TE_FLAG_PURE, 0},
-#endif
-    {"log10", log10,  TE_FUNCTION1 | TE_FLAG_PURE, 0},
+// 	{"ln",log,        TE_FUNCTION0 | TE_FLAG_PURE, 0},
+// #ifdef TE_NAT_LOG
+//     {"log", log,      TE_FUNCTION1 | TE_FLAG_PURE, 0},
+// #else
+//     {"log", log10,    TE_FUNCTION1 | TE_FLAG_PURE, 0},
+// #endif
+//     {"log10", log10,  TE_FUNCTION1 | TE_FLAG_PURE, 0},
 	{"m",m,           TE_FUNCTION0 | TE_FLAG_PURE, 0},
 	{"n",n,           TE_FUNCTION0 | TE_FLAG_PURE, 0},
-    {"ncr", ncr,      TE_FUNCTION2 | TE_FLAG_PURE, 0},
-    {"npr", npr,      TE_FUNCTION2 | TE_FLAG_PURE, 0},
+//     {"ncr", ncr,      TE_FUNCTION2 | TE_FLAG_PURE, 0},
+//     {"npr", npr,      TE_FUNCTION2 | TE_FLAG_PURE, 0},
 	{"p",p,           TE_FUNCTION0 | TE_FLAG_PURE, 0},
     {"pow", pow,      TE_FUNCTION2 | TE_FLAG_PURE, 0},
-    {"sin", sin,      TE_FUNCTION1 | TE_FLAG_PURE, 0},
-    {"sinh", sinh,    TE_FUNCTION1 | TE_FLAG_PURE, 0},
-    {"sqrt", sqrt,    TE_FUNCTION1 | TE_FLAG_PURE, 0},
-	{"tan", tan,      TE_FUNCTION1 | TE_FLAG_PURE, 0},
-    {"tanh", tanh,    TE_FUNCTION1 | TE_FLAG_PURE, 0},
+//     {"sin", sin,      TE_FUNCTION1 | TE_FLAG_PURE, 0},
+//     {"sinh", sinh,    TE_FUNCTION1 | TE_FLAG_PURE, 0},
+//     {"sqrt", sqrt,    TE_FUNCTION1 | TE_FLAG_PURE, 0},
+// 	{"tan", tan,      TE_FUNCTION1 | TE_FLAG_PURE, 0},
+//     {"tanh", tanh,    TE_FUNCTION1 | TE_FLAG_PURE, 0},
 	{"u",u,           TE_FUNCTION0 | TE_FLAG_PURE, 0},
 	//{"y",y,           TE_FUNCTION1 | TE_FLAG_PURE, 0},
 	//{"z",z,           TE_FUNCTION0 | TE_FLAG_PURE, 0},
