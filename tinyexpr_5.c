@@ -289,8 +289,8 @@ static Rational k(void) {return Fraction(1000,1);}//kilo
 static Rational M(void) {return Fraction(1000000,1);}//mega
 static Rational Mhz(void) {return Fraction(1000000,1);}//mega
 static Rational G(void) {return Fraction(1000000000,1);}//giga
-static Rational T(void) {return Fraction(100000000000,1);}//tera
-static Rational P(void) {return Fraction(100000000000000,1);}//peta
+static Rational T(void) {return Fraction(1000000000000,1);}//tera
+static Rational P(void) {return Fraction(1000000000000000,1);}//peta
 //static Rational E(void) {return Fraction(1000000000000000000,1);}//exa
 //static Rational Y(void) {return Fraction(1000000000000000000000000,1);}//yotta
 //static Rational Z(void) {return Fraction(1000000000000000000000,1);}//zetto

@@ -105,13 +105,14 @@ cparsed_op = sheet1.col_values(5)
 # print('sheet1.nrows=',sheet1.nrows)
 
 
-for idx in range(1,100):
-    print(f'Row number: {idx}')
+for idx in range(1,98):
+    # print(f'Row number: {idx}')
     comp1 = str(arithmetic_op[idx])
     comp2 = str(cparsed_op[idx])
-    print(f'Comparing: {comp1} and {comp2}') 
     if not comp2 =='':
         if Fraction(str(arithmetic_op[idx]))!= Fraction(str(cparsed_op[idx])):
-            print(f'Difference in Row number: {idx-1}')
+            print(f'Difference in Row number: {idx+1}')
+            print(f'Comparing: {comp1} and {comp2}') 
+print("*****************************")
     
 
