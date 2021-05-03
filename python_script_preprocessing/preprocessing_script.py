@@ -34,7 +34,7 @@ from string import ascii_letters, punctuation
 
 ascii_letters_without_e = ascii_letters.replace('e','')
 
-# Fix the column width to 10000
+# Fix the column width to 9000
 for i in range(6):
     sheet.col(i).width =9000
 
@@ -51,9 +51,8 @@ for idx,line in enumerate(file,1):
   var = re.split('[%s]' % OPER, line)
 
   # Check for invalid inputs(operator followed by alphabet) such as 1*M,2+m
-  # Check for invalid inputs(alphabets other than valid units) such as yzafEYZ,If true write INVALID to column 4 of the excel
-  # invalid_units = [True for o in opr if line[line.index(o)+1].isalpha()]
-  if bool(re.findall(r"[%s]|[%s]|([%s][%s])" % (BADOPERS,BADUNITS,OPER,ascii_letters_without_e), line)) : #or any(invalid_units) :
+  # Check for invalid inputs(alphabets other than valid units) such as yzafEYZ,If true write INVALID to column 3 of the excel
+  if bool(re.findall(r"[%s]|[%s]|([%s][%s])" % (BADOPERS,BADUNITS,OPER,ascii_letters_without_e), line)) :
     sheet.write(idx,3,'INVALID')
     print(f'For input={line}, output="INVALID"')
   # Recreate the expression with ( and ) on every atom includng its units
@@ -73,10 +72,10 @@ for idx,line in enumerate(file,1):
     
     ast=r'%s' % exp
 
-    # Write the expression to column 4
+    # Write the expression to column 3
     sheet.write(idx,3,exp)
 
-    # Write the cparsed value to column 5
+    # Write the cparsed value to column 4
     cparsed_op = aparse.parser(ast)
     sheet.write(idx,4,cparsed_op)
     print(f'For input={line}, exp={ast}, cparsed_op = {cparsed_op}')
@@ -91,9 +90,6 @@ rb1 = xlrd.open_workbook('D:/Arithmethic-parser-/python_script_preprocessing/out
 sheet1 = rb1.sheet_by_index(0)
 arithmetic_op = sheet1.col_values(1)
 cparsed_op = sheet1.col_values(4)
-# print('arithmetic_op=',arithmetic_op)
-# print('cparsed_op=',cparsed_op)
-print('sheet1.nrows=',sheet1.nrows)
 
 
 for idx in range(1,sheet1.nrows):
